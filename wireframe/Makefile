@@ -1,15 +1,30 @@
+CC65 = /usr/share/cc65
 
-all: cube
+.PHONY: all
+all: cube pyr3
 
-tables.h: make_tables.c
+make_tables: make_tables.c
 	gcc make_tables.c -o make_tables -lm
 	./make_tables
 
-test: cube
+cube.h: make_tables
+
+pyr3.h: make_tables
+
+.PHONY: test-cube
+test-cube: cube
 	xvic -memory 8k cube
 
-cube: cube.c tables.h
-	cl65 -I . -I /usr/share/cc65/include --asm-include-dir /usr/share/cc65/asminc -L /usr/share/cc65/lib -D DYN_DRV=0 -t vic20 -C /usr/share/cc65/cfg/vic20-tgi.cfg cube.c -o cube 
+.PHONY: test-pyr3
+test-pyr3: pyr3
+	xvic -memory 8k pyr3
 
+cube: cube.c cube.h
+	cl65 -I . -I ${CC65}/include --asm-include-dir ${CC65}/asminc -L $(CC65)/lib -D DYN_DRV=0 -t vic20 -C ${CC65}/cfg/vic20-tgi.cfg $@.c -o $@
+
+pyr3: pyr3.c pyr3.h
+	cl65 -I . -I ${CC65}/include --asm-include-dir ${CC65}/asminc -L $(CC65)/lib -D DYN_DRV=0 -t vic20 -C ${CC65}/cfg/vic20-tgi.cfg $@.c -o $@
+
+.PHONY: clean
 clean:
-	rm -f cube plots.h make_tables
+	rm -f cube cube.h make_tables cube.c.*.s pyr3 pyr3.h pyr3.c.*.s

@@ -10,7 +10,7 @@
 /* the plot points are all precalulated because cc65 doesn't have math.h or
  * float support
 **/
-#include "plots.h"
+#include "cube.h"
 
 /* Use static local variables for speed */
 #pragma static-locals (1)
